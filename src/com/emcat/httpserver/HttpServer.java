@@ -9,6 +9,8 @@ import java.net.Socket;
 
 import com.emcat.http.Request;
 import com.emcat.http.Response;
+import com.emcat.process.ServletProcess;
+import com.emcat.process.StaticResourceProcess;
 
 public class HttpServer {
 	
@@ -46,13 +48,24 @@ public class HttpServer {
 				sk = ssk.accept();
 				input = sk.getInputStream();
 				output = sk.getOutputStream();
-				Request request = new Request();
-				request.setInputStream(input);
+				Request request = new Request(input);
 				request.parse();
-				Response response = new Response();
+				Response response = new Response(output);
 				response.setRequest(request);
-				response.setOutputStream(output);
-				response.sendStaticResource();
+				
+				//handle the request and respone:two types. 1.Static Resouce:such as html.2.java Servlet class 
+				String prefix = request.getUri();
+				//no prefix£¬i think the user want to find index pages.
+				if(prefix==null){
+					request.setUri("index.html");
+				}
+				if(request.getUri().startsWith("/Servlet")){
+					ServletProcess sp = new ServletProcess(request, response);
+					sp.process(request, response);
+				}else{
+					StaticResourceProcess srp = new StaticResourceProcess(request, response);
+					srp.process(request, response);
+				}
 				
 				if(sk!=null){
 					sk.close();

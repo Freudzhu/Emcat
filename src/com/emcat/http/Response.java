@@ -6,33 +6,35 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Locale;
 
-import com.commom.Constants;
 
-public class Response {
+
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletResponse;
+
+import com.emcat.commom.Constants;
+
+public class Response implements ServletResponse{
 	
 	private Request request;
+	private OutputStream outputStream;
 	
-	public Request getRequest() {
-		return request;
-	}
-
 	public void setRequest(Request request) {
 		this.request = request;
 	}
-
-	public Response(){
-		
+	public Request getRequest() {
+		return request;
 	}
-	private OutputStream outputStream;
-
-	public OutputStream getOutputStream() {
-		return outputStream;
-	}
-
-	public void setOutputStream(OutputStream outputStream) {
+	public Response(OutputStream outputStream){
 		this.outputStream = outputStream;
 	}
+
+	public ServletOutputStream getOutputStream() {
+		return null;
+	}
+
 	public void sendStaticResource(){
 		String url = request.getUri();
 		File file = new File(Constants.WEB_ROOT,url);
@@ -71,7 +73,9 @@ public class Response {
 		}else {
 			StringBuffer errMsg = new StringBuffer();
 			errMsg.append("HTTP/1.1 404 Not Found\r\n");
-			errMsg.append("Content-Type: text/html;charset=ISO-8859-1");
+			errMsg.append("Content-Type: text/html;charset=ISO-8859-1\r\n");
+			errMsg.append("\r\n");
+			errMsg.append("File Not find!");
 			try {
 				outputStream.write(errMsg.toString().getBytes());
 				outputStream.flush();
@@ -92,5 +96,76 @@ public class Response {
 		
 		
 	}
+	@Override
+	public void flushBuffer() throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public int getBufferSize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	@Override
+	public String getCharacterEncoding() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public String getContentType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Locale getLocale() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public PrintWriter getWriter() throws IOException {
+		// TODO Auto-generated method stub
+		return new PrintWriter(outputStream,true);
+	}
+	@Override
+	public boolean isCommitted() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public void reset() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void resetBuffer() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void setBufferSize(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void setCharacterEncoding(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void setContentLength(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void setContentType(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void setLocale(Locale arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
