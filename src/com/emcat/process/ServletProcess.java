@@ -10,19 +10,21 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 
 import com.emcat.commom.Constants;
+import com.emcat.http.HttpRequest;
+import com.emcat.http.HttpResponse;
 import com.emcat.http.Request;
 import com.emcat.http.Response;
 
 public class ServletProcess implements Process{
-	private Request request;
-	private Response response;
+	private HttpRequest request;
+	private HttpResponse response;
 
-	public ServletProcess(Request request,Response response){
+	public ServletProcess(HttpRequest request,HttpResponse response){
 		this.request = request;
 		this.response = response;
 	}
 	@Override
-	public void process(Request request, Response response) {
+	public void process(HttpRequest request, HttpResponse response) {
 		// TODO Auto-generated method stub
 		String url = request.getUri();
 		String servletName = url.substring(url.indexOf("/",1)+1,url.length());
@@ -64,19 +66,19 @@ public class ServletProcess implements Process{
       
 	}
 
-	public Request getRequest() {
+	public HttpRequest getRequest() {
 		return request;
 	}
 
-	public void setRequest(Request request) {
+	public void setRequest(HttpRequest request) {
 		this.request = request;
 	}
 
-	public Response getResponse() {
+	public HttpResponse getResponse() {
 		return response;
 	}
 
-	public void setResponse(Response response) {
+	public void setResponse(HttpResponse response) {
 		this.response = response;
 	}
 	

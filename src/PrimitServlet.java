@@ -9,6 +9,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.catalina.util.ParameterMap;
+
+import com.emcat.http.HttpRequest;
+
 
 public class PrimitServlet implements Servlet{
 
@@ -39,7 +43,12 @@ public class PrimitServlet implements Servlet{
 		res.getWriter().println("Content-Type:text/html;charset=ISO-8859-1");
 		res.getWriter().println();
 		res.getWriter().println("Hello world");
+		res.getWriter().println(req.getContentLength());
+		res.getWriter().println(req.getContentType());
+		HttpRequest hsr = (HttpRequest)req;
+		res.getWriter().println(hsr.getParameter("name")+hsr.getParameter("password"));
 		res.getWriter().flush();
+		
 		
 	}
 
