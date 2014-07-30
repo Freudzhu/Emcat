@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.util.ParameterMap;
 
-import com.emcat.http.HttpRequest;
+import com.emcat.connector.HttpRequest;
 
 
 public class PrimitServlet implements Servlet{
@@ -42,11 +42,22 @@ public class PrimitServlet implements Servlet{
 		res.getWriter().println("HTTP/1.1 200 OK");
 		res.getWriter().println("Content-Type:text/html;charset=ISO-8859-1");
 		res.getWriter().println();
-		res.getWriter().println("Hello world");
-		res.getWriter().println(req.getContentLength());
-		res.getWriter().println(req.getContentType());
+		res.getWriter().println("Hello world</br>");
+		res.getWriter().println(req.getContentLength()+"</br>");
+		res.getWriter().println(req.getContentType()+"</br>");
 		HttpRequest hsr = (HttpRequest)req;
-		res.getWriter().println(hsr.getParameter("name")+hsr.getParameter("password"));
+		res.getWriter().println(hsr.getParameter("name")+hsr.getParameter("password")+"</br>");
+		System.out.println("thread sleep start"+"</br>");
+		res.getWriter().println("thread sleep start"+"</br>");
+		res.getWriter().flush();
+		try {
+			Thread.sleep(50000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		res.getWriter().println("thread sleep end");
+		res.getWriter().println(Thread.currentThread().getName());
 		res.getWriter().flush();
 		
 		

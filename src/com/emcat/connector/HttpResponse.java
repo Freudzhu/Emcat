@@ -1,4 +1,4 @@
-package com.emcat.http;
+package com.emcat.connector;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
@@ -20,6 +21,7 @@ public class HttpResponse implements HttpServletResponse {
 	private HttpRequest request;
 	
 	private OutputStream outputStream;
+	private HashMap headers = new HashMap();
 	
 	public HttpResponse(OutputStream outputStream){
 		this.outputStream = outputStream;
@@ -226,8 +228,11 @@ public class HttpResponse implements HttpServletResponse {
 	}
 
 	@Override
-	public void setHeader(String arg0, String arg1) {
+	public void setHeader(String name, String value) {
 		// TODO Auto-generated method stub
+		synchronized (headers) {
+            headers.put(name, value);
+        }
 		
 	}
 

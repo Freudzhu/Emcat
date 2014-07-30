@@ -1,4 +1,4 @@
-package com.emcat.http;
+package com.emcat.connector;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,20 +12,26 @@ import org.apache.catalina.util.RequestUtil;
 import com.emcat.process.ServletProcess;
 import com.emcat.process.StaticResourceProcess;
 
-public class HttpProcessor {
+public class HttpProcessor implements Runnable{
 	
 	HttpConnector connector;
 	HttpRequestLine requestLine = new HttpRequestLine();
 	HttpRequest request = null;
 	HttpResponse response = null;
 	HttpHeader header = null;
+	int id;//httpprocessor id;
 
 	
-	public HttpProcessor(HttpConnector connector){
+	public HttpProcessor(HttpConnector connector,int id){
 		this.connector = connector;
+		this.id = id;
 	}
 	
-	public void process(Socket socket){
+	private boolean ok;//indicate that there is no error duringthe process
+	private boolean finishResponse;//indicate that the finishResponsemethod of the Response interface should be called.
+	private boolean keepAlive;//indicates that the connection is persistent
+	
+	private void process(Socket socket){
 		
 		SocketInputStream sis = null;
 		OutputStream outputStream = null;
@@ -94,7 +100,7 @@ public class HttpProcessor {
 		if(requestLine.protocolEnd > 0){
 			protocol = new String(requestLine.protocol,0,requestLine.protocolEnd);
 		}else{
-			throw new ServletException("Missing HTTP request method");
+			throw new ServletException("Missing HTTP request protocol");
 		}
 		
 		String url = null;
@@ -183,5 +189,56 @@ public class HttpProcessor {
 			     }
 		 }
 	 }
+	 /*
+	  * implment the process as a thread,support mutiple acess.
+	  */
+	 private boolean stop = false;
+	 private boolean avaliable = false;
+	 private Socket socket ;
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		while(!stop){
+			Socket socket = await();
+			process(socket); 
+			connector.recycle(this);
+		}
+		
+	}
+
+	private synchronized Socket await() {
+		// TODO Auto-generated method stub
+		while(!avaliable){
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		Socket socket = this.socket;
+		avaliable = false;
+		notify();
+		return socket;
+	}
+	public synchronized void assign(Socket socket) {
+		while(avaliable){
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		 // Store the newly available Socket and notify our thread
+		avaliable = true;
+		notify();
+		this.socket = socket;
+	}
+	public void start(){
+		Thread thread =  new Thread(this,String.valueOf(id));
+		thread.setDaemon(true);
+		thread.start();
+	}
 
 }

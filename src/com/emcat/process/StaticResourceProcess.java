@@ -1,9 +1,9 @@
 package com.emcat.process;
 
-import com.emcat.http.HttpRequest;
-import com.emcat.http.HttpResponse;
-import com.emcat.http.Request;
-import com.emcat.http.Response;
+import com.emcat.connector.HttpRequest;
+import com.emcat.connector.HttpResponse;
+import com.emcat.connector.Request;
+import com.emcat.connector.Response;
 
 public class StaticResourceProcess implements Process{
 	

@@ -1,4 +1,4 @@
-package com.emcat.http;
+package com.emcat.connector;
 
 /**
  * HTTP header enum type.

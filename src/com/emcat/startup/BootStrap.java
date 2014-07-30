@@ -1,6 +1,6 @@
 package com.emcat.startup;
 
-import com.emcat.http.HttpConnector;
+import com.emcat.connector.HttpConnector;
 
 public class BootStrap {
 	

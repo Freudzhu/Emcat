@@ -1,4 +1,4 @@
-package com.emcat.http;
+package com.emcat.connector;
 
 import java.io.BufferedReader;
 import java.io.IOException;
