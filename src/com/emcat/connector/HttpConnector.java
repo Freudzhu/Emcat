@@ -8,13 +8,24 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Stack;
 
+import com.emcat.einterface.Container;
+
 public class HttpConnector implements Runnable{
 	
 	private int LISTEN_PORT = 8089;
 	private int BLACK_LOG = 1;
 	private boolean shutDown = true;
 	private String scheme = "http";
+	private Container container = null;
 	
+	public Container getContainer() {
+		return container;
+	}
+
+	public void setContainer(Container container) {
+		this.container = container;
+	}
+
 	public String getScheme() {
 	    return scheme;
 	}

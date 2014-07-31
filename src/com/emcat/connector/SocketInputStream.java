@@ -103,7 +103,7 @@ public class SocketInputStream extends InputStream {
      * The string manager for this package.
      */
     protected static StringManager sm =
-        StringManager.getManager("com.emcat.http");
+        StringManager.getManager("com.emcat.connector");
 
 
     // ----------------------------------------------------- Instance Variables

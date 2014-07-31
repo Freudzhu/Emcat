@@ -9,6 +9,7 @@ import javax.servlet.http.Cookie;
 
 import org.apache.catalina.util.RequestUtil;
 
+import com.emcat.einterface.Container;
 import com.emcat.process.ServletProcess;
 import com.emcat.process.StaticResourceProcess;
 
@@ -27,7 +28,7 @@ public class HttpProcessor implements Runnable{
 		this.id = id;
 	}
 	
-	private boolean ok;//indicate that there is no error duringthe process
+	private boolean ok = true;//indicate that there is no error duringthe process
 	private boolean finishResponse;//indicate that the finishResponsemethod of the Response interface should be called.
 	private boolean keepAlive;//indicates that the connection is persistent
 	
@@ -41,38 +42,61 @@ public class HttpProcessor implements Runnable{
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			ok = false;
 		}
 		
-		request = new HttpRequest();
+		keepAlive = true;
 		
-		response = new HttpResponse(outputStream);
-		response.setRequest(request);
+		while(ok&&keepAlive&&!stop){
+			
+			request = new HttpRequest();
+			response = new HttpResponse(outputStream);
+			response.setRequest(request);
+			
+			
+			//parse header and requestUri
+			try {
+				parseRequestLine(sis);
+				parseHeaders(sis);
+			} catch (ServletException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				ok = false;
+			}
+			if (http11) {
+				ackRequest(outputStream);
+			}
+			 
+			if(ok){
+				if(request.getUri().startsWith("/Servlet")){
+					Container container = connector.getContainer();
+					container.invoke(request, response);
+				}else{
+					StaticResourceProcess srp = new StaticResourceProcess(request, response);
+					srp.process(request, response);
+				}
+				
+			}
+			if ( "close".equals(response.getHeader("Connection")) ) {      
+				keepAlive = false;   
+			}
 		
-		//parse header and requestUri
-		try {
-			parseRequestLine(sis);
-			parseHeaders(sis);
-		} catch (ServletException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		}
-		
-		if(request.getUri() == null){
-			request.setUri("index.html");
-		}
-		
-		if(request.getUri().startsWith("/Servlet")){
-			ServletProcess sp = new ServletProcess(request, response);
-			sp.process(request, response);
-		}else{
-			StaticResourceProcess srp = new StaticResourceProcess(request, response);
-			srp.process(request, response);
-		}
-		
-		
 		if(socket != null){
 			try {
 				socket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void ackRequest(OutputStream outputStream) {
+		// TODO Auto-generated method stub
+		if(sendAck){
+			try {
+				outputStream.write(ack);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -101,6 +125,19 @@ public class HttpProcessor implements Runnable{
 			protocol = new String(requestLine.protocol,0,requestLine.protocolEnd);
 		}else{
 			throw new ServletException("Missing HTTP request protocol");
+		}
+		if(protocol.length()==0){
+		    protocol = "HTTP/0.9";
+		}
+		if(protocol.equals("HTTP/1.1")){
+			http11 = true;
+            sendAck = false;
+		}else{
+			http11 = false;
+            sendAck = false;
+            // For HTTP/1.0, connection are not persistent by default,
+            // unless specified with a Connection: Keep-Alive header.
+            keepAlive = false;
 		}
 		
 		String url = null;
@@ -185,7 +222,18 @@ public class HttpProcessor implements Runnable{
 					 n = Integer.parseInt(value);
 					 request.setContentLength(n);
 				 }else if (name.equals("content-type")) {
-				        request.setContentType(value);
+				     request.setContentType(value);
+			     }else if(name.equals("expect")){
+			    	 if(value.equals("100-continue")){
+			    		 sendAck = true;
+			    	 }
+			     }else if(name.equals("connection")){
+			    	 if(value.equals("close")){
+			    		 keepAlive = false;
+			    		 response.setHeader("Connection", "close");
+			    	 }else if(value.equals("keep-alive")){
+			    		 keepAlive = true;
+			    	 }
 			     }
 		 }
 	 }
@@ -195,6 +243,22 @@ public class HttpProcessor implements Runnable{
 	 private boolean stop = false;
 	 private boolean avaliable = false;
 	 private Socket socket ;
+	 private boolean http11 = false;
+	 
+	 /**
+	     * True if the client has asked to recieve a request acknoledgement. If so
+	     * the server will send a preliminary 100 Continue response just after it
+	     * has successfully parsed the request headers, and before starting
+	     * reading the request entity body.
+	     */
+	private boolean sendAck = false;
+	
+	/**
+     * Ack string when pipelining HTTP requests.
+     */
+    private static final byte[] ack =
+        (new String("HTTP/1.1 100 Continue\r\n\r\n")).getBytes();
+    
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
