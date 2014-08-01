@@ -1,6 +1,8 @@
 package com.emcat.connector;
 
+import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
@@ -10,7 +12,6 @@ import javax.servlet.http.Cookie;
 import org.apache.catalina.util.RequestUtil;
 
 import com.emcat.einterface.Container;
-import com.emcat.process.ServletProcess;
 import com.emcat.process.StaticResourceProcess;
 
 public class HttpProcessor implements Runnable{
@@ -29,7 +30,7 @@ public class HttpProcessor implements Runnable{
 	}
 	
 	private boolean ok = true;//indicate that there is no error duringthe process
-	private boolean finishResponse;//indicate that the finishResponsemethod of the Response interface should be called.
+	private boolean finishResponse=true;//indicate that the finishResponsemethod of the Response interface should be called.
 	private boolean keepAlive;//indicates that the connection is persistent
 	
 	private void process(Socket socket){
@@ -47,7 +48,7 @@ public class HttpProcessor implements Runnable{
 		
 		keepAlive = true;
 		
-		while(ok&&keepAlive&&!stop){
+		while(ok&&keepAlive&&!stop&&finishResponse){
 			
 			request = new HttpRequest();
 			response = new HttpResponse(outputStream);
@@ -58,14 +59,19 @@ public class HttpProcessor implements Runnable{
 			try {
 				parseRequestLine(sis);
 				parseHeaders(sis);
+				if (http11) {
+					ackRequest(outputStream);
+				}
 			} catch (ServletException e1) {
 				// TODO Auto-generated catch block
+				ok = false;
 				e1.printStackTrace();
+			} catch (EOFException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 				ok = false;
 			}
-			if (http11) {
-				ackRequest(outputStream);
-			}
+			
 			 
 			if(ok){
 				if(request.getUri().startsWith("/Servlet")){
@@ -105,10 +111,14 @@ public class HttpProcessor implements Runnable{
 		
 	}
 
-	private void parseRequestLine(SocketInputStream sis) throws ServletException {
+	private void parseRequestLine(SocketInputStream sis) throws ServletException, EOFException {
 		// TODO Auto-generated method stub
 		try {
 			sis.readRequestLine(requestLine);
+		} catch (EOFException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new EOFException();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -237,6 +247,17 @@ public class HttpProcessor implements Runnable{
 			     }
 		 }
 	 }
+	 protected void shutdownInput(InputStream input) {
+	        try {
+	            int available = input.available();
+	            // skip any unread (bogus) bytes
+	            if (available > 0) {
+	                input.skip(available);
+	            }
+	        } catch (Throwable e) {
+	            ;
+	        }
+	    }
 	 /*
 	  * implment the process as a thread,support mutiple acess.
 	  */
