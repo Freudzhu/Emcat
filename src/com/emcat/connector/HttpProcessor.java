@@ -47,7 +47,7 @@ public class HttpProcessor implements Runnable{
 		}
 		
 		keepAlive = true;
-		
+		finishResponse = true;
 		while(ok&&keepAlive&&!stop&&finishResponse){
 			
 			request = new HttpRequest();
@@ -77,9 +77,11 @@ public class HttpProcessor implements Runnable{
 				if(request.getUri().startsWith("/Servlet")){
 					Container container = connector.getContainer();
 					container.invoke(request, response);
+					finishResponse = false;
 				}else{
 					StaticResourceProcess srp = new StaticResourceProcess(request, response);
 					srp.process(request, response);
+					finishResponse = false;
 				}
 				
 			}

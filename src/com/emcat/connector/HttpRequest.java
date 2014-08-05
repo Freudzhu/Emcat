@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class HttpRequest implements HttpServletRequest{
 	private boolean requestedSessionURL;
 	
 	//collect the heads(key,value)
-	protected HashMap headers = new HashMap();
+	protected Hashtable<String,ArrayList<String>> headers = new Hashtable<String,ArrayList<String>>();
 	
 	//collect the cookies
 	protected ArrayList cookies = new ArrayList();
@@ -369,7 +370,7 @@ public class HttpRequest implements HttpServletRequest{
 	@Override
 	public Enumeration<String> getHeaderNames() {
 		// TODO Auto-generated method stub
-		return null;
+		return (Enumeration<String>) headers.keys();
 	}
 
 	@Override

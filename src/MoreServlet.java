@@ -41,14 +41,10 @@ public class MoreServlet implements Servlet{
 		System.out.println("load the Servlet");
 		res.getWriter().println("HTTP/1.1 200 OK");
 		res.getWriter().println("Content-Type:text/html;charset=ISO-8859-1");
-		res.getWriter().println("Content-length:0");
+		res.getWriter().println("Content-length:16");
 		res.getWriter().println();
 		res.getWriter().println("Hello world</br>");
-		res.getWriter().println(req.getContentLength()+"</br>");
-		res.getWriter().println(req.getContentType()+"</br>");
 		HttpRequest hsr = (HttpRequest)req;
-		res.getWriter().println(hsr.getParameter("name")+hsr.getParameter("password")+"</br>");
-		System.out.println("thread sleep start");
 		res.getWriter().println(Thread.currentThread().getName()+"</br>");
 		res.getWriter().flush();
 		
