@@ -12,9 +12,8 @@ import com.emcat.einterface.Container;
 import com.emcat.einterface.Loader;
 import com.emcat.einterface.Value;
 
-public class SimpleValue implements Value,Contained{
+public class SimpleWraperValue implements Value,Contained{
 	
-	Loader loader;
 	Container container;
 
 	@Override
@@ -22,7 +21,7 @@ public class SimpleValue implements Value,Contained{
 		
 		StandrdWrapper wrapper = (StandrdWrapper) getContainer();
 		Servlet servlet = null;
-		servlet = wrapper.getLoader().loadServlet(null, req, res);
+		servlet = wrapper.allocte();
 		try {
 			servlet.service(req, res);
 		} catch (ServletException e) {

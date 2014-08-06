@@ -25,6 +25,7 @@ public class MoreServlet implements Servlet{
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		// TODO Auto-generated method stub
+		System.out.println("MoreServlet init");
 		
 	}
 

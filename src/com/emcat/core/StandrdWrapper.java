@@ -1,6 +1,7 @@
 package com.emcat.core;
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletException;
 
 import com.emcat.connector.HttpRequest;
 import com.emcat.connector.HttpResponse;
@@ -18,11 +19,12 @@ public class StandrdWrapper implements Wrapper,PipleLine{
 	Container parent = null;
 	String servletName;
 	String servletClasString;
+	Servlet instance;
 	
 	public StandrdWrapper(){
 		pipleLine = new SimplePipleLine();
 		loader = new SimpleLoader();
-		SimpleValue simpleValue  = new SimpleValue();
+		SimpleWraperValue simpleValue  = new SimpleWraperValue();
 		simpleValue.setContainer(this);
 		pipleLine.setBasic(simpleValue);
 	}
@@ -49,27 +51,27 @@ public class StandrdWrapper implements Wrapper,PipleLine{
 	}
 
 	@Override
-	public void addChild(Container child) {
+	public void addChild(Container child) throws ServletException {
 		// TODO Auto-generated method stub
-		
+		throw new ServletException("wrap has not chiledren");
 	}
 
 	@Override
-	public void removeChild(Container child) {
+	public void removeChild(Container child) throws ServletException {
 		// TODO Auto-generated method stub
-		
+		throw new ServletException("wrap does not support");
 	}
 
 	@Override
-	public Container findChild(String name) {
+	public Container findChild(String name) throws ServletException {
 		// TODO Auto-generated method stub
-		return null;
+		throw new ServletException("wrap does not support");
 	}
 
 	@Override
-	public Container[] findChildren() {
+	public Container[] findChildren() throws ServletException {
 		// TODO Auto-generated method stub
-		return null;
+		throw new ServletException("wrap does not support");
 	}
 
 	@Override
@@ -123,5 +125,60 @@ public class StandrdWrapper implements Wrapper,PipleLine{
 	public void setServletClasString(String servletClasString) {
 		this.servletClasString = servletClasString;
 	}
+	private Servlet loadServlet() throws ServletException {
+		
+		if (instance!=null)
+		      return instance;
+		if(servletClasString==null){
+			 throw new ServletException("servlet class has not been specified");
+		}
+		Loader loader = getLoader();
+		if(loader == null){
+			throw new ServletException("No loader.");
+		}
+		ClassLoader classLoader = loader.getClassLoader();
+		Class  class1 = null;
+		if(classLoader!=null){
+			try {
+				class1 = classLoader.loadClass(servletClasString);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				servlet = (Servlet) class1.newInstance();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			servlet.init(null);
+		}
+		return servlet;
+		
+	}
 
+	@Override
+	public Servlet allocte() {
+		// TODO Auto-generated method stub
+		if(instance==null){
+			try {
+				instance = loadServlet();
+			} catch (ServletException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		return instance;
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return servletName;
+	}
+
+	
 }

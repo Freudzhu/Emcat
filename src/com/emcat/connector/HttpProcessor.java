@@ -74,13 +74,14 @@ public class HttpProcessor implements Runnable{
 			
 			 
 			if(ok){
-				if(request.getUri().startsWith("/Servlet")){
-					Container container = connector.getContainer();
-					container.invoke(request, response);
-					finishResponse = false;
-				}else{
+				if(request.getUri().startsWith("/static")){
 					StaticResourceProcess srp = new StaticResourceProcess(request, response);
 					srp.process(request, response);
+					finishResponse = false;
+				
+				}else{
+					Container container = connector.getContainer();
+					container.invoke(request, response);
 					finishResponse = false;
 				}
 				
