@@ -9,8 +9,13 @@ import com.emcat.einterface.Mapper;
 import com.emcat.einterface.Wrapper;
 
 public class SimpleMapper implements Mapper,Contained{
-
+	
 	Container container ;
+	
+	public SimpleMapper(Container c){
+		this.container = c;
+		
+	}
 	
 	@Override
 	public Wrapper mapper(HttpRequest req) {

@@ -31,9 +31,8 @@ public class SimpleContext implements Context{
 	public SimpleContext(){
 		pipleLine = new SimplePipleLine();
 		loader = new SimpleLoader();
-		mapper = new SimpleMapper();
-		SimpleContextValue simpleValue  = new SimpleContextValue();
-		simpleValue.setContainer(this);
+		mapper = new SimpleMapper(this);
+		SimpleContextValue simpleValue  = new SimpleContextValue(this);
 		pipleLine.setBasic(simpleValue);
 		
 	}

@@ -8,8 +8,13 @@ import com.emcat.einterface.Value;
 import com.emcat.einterface.Wrapper;
 
 public class SimpleContextValue implements Value,Contained{
-
+	
 	Container container;
+	
+	public SimpleContextValue(Container container){
+		this.container = container;
+	}
+
 	@Override
 	public void invoke(HttpRequest req, HttpResponse res) {
 		// TODO Auto-generated method stub
