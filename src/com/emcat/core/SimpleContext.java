@@ -1,6 +1,6 @@
 package com.emcat.core;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -14,8 +14,13 @@ import com.emcat.einterface.Context;
 import com.emcat.einterface.Loader;
 import com.emcat.einterface.Mapper;
 import com.emcat.einterface.PipleLine;
+import com.emcat.lifecycle.LifeCycle;
+import com.emcat.lifecycle.LifeCycleException;
+import com.emcat.lifecycle.LifeCycleSupport;
+import com.emcat.lifecycle.LifecycleListener;
+import com.emcat.lifecycle.ListenerEvent;
 
-public class SimpleContext implements Context{
+public class SimpleContext implements Context,LifeCycle{
 	
 	Loader loader;
 	PipleLine pipleLine;
@@ -24,15 +29,18 @@ public class SimpleContext implements Context{
 	String servletName;
 	String servletClasString;
 	Servlet instance;
-	Container[]  childrens = new Container[0];
+	ArrayList<Container>  childrens = new ArrayList<Container>();
 	Map<String,String> servletMap = new Hashtable<String, String>();
 	Mapper mapper = null;
+	LifeCycleSupport lifeCycleSupport; 
+	Boolean started = false;
 	
 	public SimpleContext(){
 		pipleLine = new SimplePipleLine();
 		loader = new SimpleLoader();
 		mapper = new SimpleMapper(this);
 		SimpleContextValue simpleValue  = new SimpleContextValue(this);
+		lifeCycleSupport = new LifeCycleSupport();
 		pipleLine.setBasic(simpleValue);
 		
 	}
@@ -49,19 +57,13 @@ public class SimpleContext implements Context{
 	@Override
 	public void addChild(Container child) throws ServletException {
 		// TODO Auto-generated method stub
-		Container[] result = new Container[childrens.length+1];
-		result = Arrays.copyOf(childrens, result.length);
-		result[result.length-1] = child;
-		childrens = result;
+		childrens.add(child);
 	}
 
 	@Override
 	public void removeChild(Container child) throws ServletException {
 		// TODO Auto-generated method stub
-		Container[] result = new Container[childrens.length-1];
-		result = Arrays.copyOf(childrens, result.length);
-		result[result.length-1] = child;
-		childrens = result;
+		childrens.remove(child);
 	}
 
 	@Override
@@ -78,7 +80,11 @@ public class SimpleContext implements Context{
 	@Override
 	public Container[] findChildren() throws ServletException {
 		// TODO Auto-generated method stub
-		return childrens;
+		Container[] containers = new Container[childrens.size()];
+		for(int i=0;i<childrens.size();i++){
+			containers[i] = (Container)childrens.get(i);
+		}
+		return containers;
 	}
 
 	@Override
@@ -123,6 +129,57 @@ public class SimpleContext implements Context{
 	public String getName() {
 		// TODO Auto-generated method stub
 		return servletName;
+	}
+
+	@Override
+	public void start() throws LifeCycleException {
+		// TODO Auto-generated method stub
+		if(started)
+			return;
+		Container[] containers = null;
+		try {
+			containers = findChildren();
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		lifeCycleSupport.fireLifeListenner(LifeCycle.BEFORE_START_EVENT);
+		if(containers!=null){
+			for(Container container : containers){
+				((LifeCycle)container).start();
+			}
+		}
+		if(pipleLine!=null){
+			((LifeCycle)pipleLine).start();
+		}
+		if(loader!=null){
+			((LifeCycle)loader).start();
+		}
+		if(mapper!=null){
+			((LifeCycle)mapper).start();
+		}
+		started = true;
+		lifeCycleSupport.fireLifeListenner(LifeCycle.AFTER_START_EVENT);
+	}
+
+	@Override
+	public void stop() throws LifeCycleException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addLifeCycleListener(LifecycleListener listener)
+			throws LifeCycleException {
+		// TODO Auto-generated method stub
+		lifeCycleSupport.addLifeCycleListener(listener);
+	}
+
+	@Override
+	public void removeLifeCycleListener(LifecycleListener listener)
+			throws LifeCycleException {
+		// TODO Auto-generated method stub
+		lifeCycleSupport.removeLifeCycleListener(listener);
 	}
 
 	

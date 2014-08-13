@@ -15,10 +15,16 @@ import com.emcat.connector.HttpResponse;
 import com.emcat.einterface.Contained;
 import com.emcat.einterface.Container;
 import com.emcat.einterface.Loader;
+import com.emcat.lifecycle.LifeCycle;
+import com.emcat.lifecycle.LifeCycleException;
+import com.emcat.lifecycle.LifeCycleSupport;
+import com.emcat.lifecycle.LifecycleListener;
 
-public class SimpleLoader implements Loader,Contained{
+public class SimpleLoader implements Loader,Contained,LifeCycle{
 
 	Container container;
+	LifeCycleSupport lifeCycleSupport; 
+	
 	public Servlet loadServlet(String servletName, HttpRequest req,
 			HttpResponse res) {
 		// TODO Auto-generated method stub
@@ -80,6 +86,32 @@ public class SimpleLoader implements Loader,Contained{
 	public void setContainer(Container container) {
 		// TODO Auto-generated method stub
 		this.container = container;
+	}
+
+	@Override
+	public void start() throws LifeCycleException {
+		// TODO Auto-generated method stub
+		System.out.println("Load start Loading");
+	}
+
+	@Override
+	public void stop() throws LifeCycleException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addLifeCycleListener(LifecycleListener listener)
+			throws LifeCycleException {
+		// TODO Auto-generated method stub
+		lifeCycleSupport.addLifeCycleListener(listener);
+	}
+
+	@Override
+	public void removeLifeCycleListener(LifecycleListener listener)
+			throws LifeCycleException {
+		// TODO Auto-generated method stub
+		lifeCycleSupport.removeLifeCycleListener(listener);
 	}
 
 

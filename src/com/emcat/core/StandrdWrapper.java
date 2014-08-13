@@ -10,8 +10,12 @@ import com.emcat.einterface.Loader;
 import com.emcat.einterface.PipleLine;
 import com.emcat.einterface.Value;
 import com.emcat.einterface.Wrapper;
+import com.emcat.lifecycle.LifeCycle;
+import com.emcat.lifecycle.LifeCycleException;
+import com.emcat.lifecycle.LifeCycleSupport;
+import com.emcat.lifecycle.LifecycleListener;
 
-public class StandrdWrapper implements Wrapper,PipleLine{
+public class StandrdWrapper implements Wrapper,PipleLine,LifeCycle{
 	
 	Loader loader;
 	PipleLine pipleLine;
@@ -20,6 +24,7 @@ public class StandrdWrapper implements Wrapper,PipleLine{
 	String servletName;
 	String servletClasString;
 	Servlet instance;
+	LifeCycleSupport lifeCycleSupport;
 	
 	public StandrdWrapper(){
 		pipleLine = new SimplePipleLine();
@@ -178,6 +183,32 @@ public class StandrdWrapper implements Wrapper,PipleLine{
 	public String getName() {
 		// TODO Auto-generated method stub
 		return servletName;
+	}
+
+	@Override
+	public void start() throws LifeCycleException {
+		// TODO Auto-generated method stub
+		System.out.println(getName()+" Wrapper start Loading");
+	}
+
+	@Override
+	public void stop() throws LifeCycleException {
+		// TODO Auto-generated method stub
+		System.out.println("Wrapper stop Loading");
+	}
+
+	@Override
+	public void addLifeCycleListener(LifecycleListener listener)
+			throws LifeCycleException {
+		// TODO Auto-generated method stub
+		lifeCycleSupport.addLifeCycleListener(listener);
+	}
+
+	@Override
+	public void removeLifeCycleListener(LifecycleListener listener)
+			throws LifeCycleException {
+		// TODO Auto-generated method stub
+		lifeCycleSupport.removeLifeCycleListener(listener);
 	}
 
 	

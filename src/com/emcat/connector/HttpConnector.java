@@ -9,14 +9,19 @@ import java.net.Socket;
 import java.util.Stack;
 
 import com.emcat.einterface.Container;
+import com.emcat.lifecycle.LifeCycle;
+import com.emcat.lifecycle.LifeCycleException;
+import com.emcat.lifecycle.LifeCycleSupport;
+import com.emcat.lifecycle.LifecycleListener;
 
-public class HttpConnector implements Runnable{
+public class HttpConnector implements Runnable,LifeCycle{
 	
 	private int LISTEN_PORT = 8089;
 	private int BLACK_LOG = 1;
 	private boolean shutDown = true;
 	private String scheme = "http";
 	private Container container = null;
+	LifeCycleSupport lifeCycleSupport; 
 	
 	public Container getContainer() {
 		return container;
@@ -93,11 +98,14 @@ public class HttpConnector implements Runnable{
 		}
 		
 	}
-
-	public void start(){
+	@Override
+	public void start() throws LifeCycleException{
 		while(curProcessors < MIN_PROCESSORS){
 			HttpProcessor hp = newHttpProcessor();
 			recycle(hp);
+		}
+		if(container!=null){
+			((LifeCycle)container).start();
 		}
 		
 		Thread thread = new Thread(this);
@@ -115,6 +123,26 @@ public class HttpConnector implements Runnable{
 		curProcessors++;
 		processor.start();
 		return processor;
+	}
+
+	@Override
+	public void stop() throws LifeCycleException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addLifeCycleListener(LifecycleListener listener)
+			throws LifeCycleException {
+		// TODO Auto-generated method stub
+		lifeCycleSupport.addLifeCycleListener(listener);
+	}
+
+	@Override
+	public void removeLifeCycleListener(LifecycleListener listener)
+			throws LifeCycleException {
+		// TODO Auto-generated method stub
+		lifeCycleSupport.removeLifeCycleListener(listener);
 	}
 
 }

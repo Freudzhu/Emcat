@@ -7,11 +7,16 @@ import com.emcat.connector.HttpRequest;
 import com.emcat.connector.HttpResponse;
 import com.emcat.einterface.PipleLine;
 import com.emcat.einterface.Value;
+import com.emcat.lifecycle.LifeCycle;
+import com.emcat.lifecycle.LifeCycleException;
+import com.emcat.lifecycle.LifeCycleSupport;
+import com.emcat.lifecycle.LifecycleListener;
 
-public class SimplePipleLine implements PipleLine{
+public class SimplePipleLine implements PipleLine,LifeCycle{
 
 	ArrayList<Value> values;
 	Value basicValue;
+	LifeCycleSupport lifeCycleSupport; 
 	
 	public  SimplePipleLine(){
 		values = new ArrayList<Value>();
@@ -58,6 +63,30 @@ public class SimplePipleLine implements PipleLine{
 	public Value[] getValves() {
 		// TODO Auto-generated method stub
 		return (Value[]) values.toArray();
+	}
+	@Override
+	public void start() throws LifeCycleException {
+		// TODO Auto-generated method stub
+		System.out.println("Piple start Loading");
+	}
+	@Override
+	public void stop() throws LifeCycleException {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void addLifeCycleListener(LifecycleListener listener)
+			throws LifeCycleException {
+		// TODO Auto-generated method stub
+		lifeCycleSupport.addLifeCycleListener(listener);
+		
+	}
+	@Override
+	public void removeLifeCycleListener(LifecycleListener listener)
+			throws LifeCycleException {
+		// TODO Auto-generated method stub
+		lifeCycleSupport.addLifeCycleListener(listener);
+		
 	}
 
 }

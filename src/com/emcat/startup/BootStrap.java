@@ -9,6 +9,9 @@ import com.emcat.core.HeaderLoggerValve;
 import com.emcat.core.SimpleContext;
 import com.emcat.core.StandrdWrapper;
 import com.emcat.einterface.Value;
+import com.emcat.lifecycle.LifeCycleException;
+import com.emcat.lifecycle.LifecycleListener;
+import com.emcat.lifecycle.SimpleListener;
 
 public class BootStrap {
 	
@@ -20,20 +23,44 @@ public class BootStrap {
 		wrapper.setServletName("MoreServlet");
 		wrapper.setServletClasString("MoreServlet");
 		
+		
 		Value value = new HeaderLoggerValve();
 		wrapper.addValve(value);
 		
+		
+		StandrdWrapper wrapper1 = new StandrdWrapper();
+		wrapper1.setServletName("PrimitServlet");
+		wrapper1.setServletClasString("PrimitServlet");
+		
+		
 		SimpleContext context = new SimpleContext();
+		
+		LifecycleListener listener = new SimpleListener();
+		
+		try {
+			context.addLifeCycleListener(listener);
+		} catch (LifeCycleException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
 		try {
 			context.addChild(wrapper);
+			context.addChild(wrapper1);
 		} catch (ServletException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		context.addServletMaping("/moreservlet", "MoreServlet");
+		context.addServletMaping("/primitServlet", "PrimitServlet");
 		
 		connector.setContainer(context);
-		connector.start();
+		try {
+			connector.start();
+		} catch (LifeCycleException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		try {
 			System.in.read();
