@@ -12,6 +12,8 @@ import com.emcat.einterface.Value;
 import com.emcat.lifecycle.LifeCycleException;
 import com.emcat.lifecycle.LifecycleListener;
 import com.emcat.lifecycle.SimpleListener;
+import com.emcat.logger.Logger;
+import com.emcat.logger.SystemoutLogger;
 
 public class BootStrap {
 	
@@ -37,6 +39,9 @@ public class BootStrap {
 		
 		LifecycleListener listener = new SimpleListener();
 		
+		Logger logger = new SystemoutLogger();
+		context.setLogger(logger);
+		
 		try {
 			context.addLifeCycleListener(listener);
 		} catch (LifeCycleException e2) {
@@ -53,6 +58,8 @@ public class BootStrap {
 		}
 		context.addServletMaping("/moreservlet", "MoreServlet");
 		context.addServletMaping("/primitServlet", "PrimitServlet");
+		wrapper.setParent(context);
+		wrapper1.setParent(context);
 		
 		connector.setContainer(context);
 		try {

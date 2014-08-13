@@ -18,7 +18,7 @@ import com.emcat.lifecycle.LifeCycle;
 import com.emcat.lifecycle.LifeCycleException;
 import com.emcat.lifecycle.LifeCycleSupport;
 import com.emcat.lifecycle.LifecycleListener;
-import com.emcat.lifecycle.ListenerEvent;
+import com.emcat.logger.Logger;
 
 public class SimpleContext implements Context,LifeCycle{
 	
@@ -34,9 +34,10 @@ public class SimpleContext implements Context,LifeCycle{
 	Mapper mapper = null;
 	LifeCycleSupport lifeCycleSupport; 
 	Boolean started = false;
+	Logger logger;
 	
 	public SimpleContext(){
-		pipleLine = new SimplePipleLine();
+		pipleLine = new SimplePipleLine(this);
 		loader = new SimpleLoader();
 		mapper = new SimpleMapper(this);
 		SimpleContextValue simpleValue  = new SimpleContextValue(this);
@@ -135,7 +136,7 @@ public class SimpleContext implements Context,LifeCycle{
 	public void start() throws LifeCycleException {
 		// TODO Auto-generated method stub
 		if(started)
-			return;
+			throw new LifeCycleException("SimpleContext has already started");
 		Container[] containers = null;
 		try {
 			containers = findChildren();
@@ -165,7 +166,7 @@ public class SimpleContext implements Context,LifeCycle{
 	@Override
 	public void stop() throws LifeCycleException {
 		// TODO Auto-generated method stub
-		
+		logger.log("Context is stoping");
 	}
 
 	@Override
@@ -180,6 +181,14 @@ public class SimpleContext implements Context,LifeCycle{
 			throws LifeCycleException {
 		// TODO Auto-generated method stub
 		lifeCycleSupport.removeLifeCycleListener(listener);
+	}
+
+	public Logger getLogger() {
+		return logger;
+	}
+
+	public void setLogger(Logger logger) {
+		this.logger = logger;
 	}
 
 	

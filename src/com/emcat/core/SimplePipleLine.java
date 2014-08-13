@@ -5,21 +5,27 @@ import java.util.Arrays;
 
 import com.emcat.connector.HttpRequest;
 import com.emcat.connector.HttpResponse;
+import com.emcat.einterface.Contained;
+import com.emcat.einterface.Container;
 import com.emcat.einterface.PipleLine;
 import com.emcat.einterface.Value;
 import com.emcat.lifecycle.LifeCycle;
 import com.emcat.lifecycle.LifeCycleException;
 import com.emcat.lifecycle.LifeCycleSupport;
 import com.emcat.lifecycle.LifecycleListener;
+import com.emcat.logger.Logger;
 
-public class SimplePipleLine implements PipleLine,LifeCycle{
+public class SimplePipleLine implements PipleLine,LifeCycle,Contained{
 
 	ArrayList<Value> values;
 	Value basicValue;
 	LifeCycleSupport lifeCycleSupport; 
+	Logger logger;
+	Container container;
 	
-	public  SimplePipleLine(){
+	public  SimplePipleLine(Container container){
 		values = new ArrayList<Value>();
+		this.container = container;
 	}
 	@Override
 	public void invoke(HttpRequest req, HttpResponse res) {
@@ -87,6 +93,28 @@ public class SimplePipleLine implements PipleLine,LifeCycle{
 		// TODO Auto-generated method stub
 		lifeCycleSupport.addLifeCycleListener(listener);
 		
+	}
+	public Logger getLogger() {
+		if(logger!=null)
+			return logger;
+		Logger logger = getContainer().getLogger();
+		if(logger!=null){
+			return logger;
+		}
+		return null;
+	}
+	public void setLogger(Logger logger) {
+		this.logger = logger;
+	}
+	@Override
+	public Container getContainer() {
+		// TODO Auto-generated method stub
+		return container;
+	}
+	@Override
+	public void setContainer(Container container) {
+		// TODO Auto-generated method stub
+		this.container = container;
 	}
 
 }

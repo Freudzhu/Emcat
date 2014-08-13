@@ -14,6 +14,7 @@ import com.emcat.lifecycle.LifeCycle;
 import com.emcat.lifecycle.LifeCycleException;
 import com.emcat.lifecycle.LifeCycleSupport;
 import com.emcat.lifecycle.LifecycleListener;
+import com.emcat.logger.Logger;
 
 public class StandrdWrapper implements Wrapper,PipleLine,LifeCycle{
 	
@@ -25,9 +26,10 @@ public class StandrdWrapper implements Wrapper,PipleLine,LifeCycle{
 	String servletClasString;
 	Servlet instance;
 	LifeCycleSupport lifeCycleSupport;
+	Logger logger;
 	
 	public StandrdWrapper(){
-		pipleLine = new SimplePipleLine();
+		pipleLine = new SimplePipleLine(this);
 		loader = new SimpleLoader();
 		SimpleWraperValue simpleValue  = new SimpleWraperValue();
 		simpleValue.setContainer(this);
@@ -188,13 +190,14 @@ public class StandrdWrapper implements Wrapper,PipleLine,LifeCycle{
 	@Override
 	public void start() throws LifeCycleException {
 		// TODO Auto-generated method stub
-		System.out.println(getName()+" Wrapper start Loading");
+		logger = getLogger();
+		logger.log(getName()+" Wrapper start Loading");
 	}
 
 	@Override
 	public void stop() throws LifeCycleException {
 		// TODO Auto-generated method stub
-		System.out.println("Wrapper stop Loading");
+		logger.log("Wrapper stop Loading");
 	}
 
 	@Override
@@ -210,6 +213,23 @@ public class StandrdWrapper implements Wrapper,PipleLine,LifeCycle{
 		// TODO Auto-generated method stub
 		lifeCycleSupport.removeLifeCycleListener(listener);
 	}
+
+	@Override
+	public Logger getLogger() {
+		// TODO Auto-generated method stub
+		if (logger != null)      
+			 return (logger);    
+		 if (parent != null)       
+			 return (parent.getLogger());    
+		 return (null);
+	}
+
+	@Override
+	public void setLogger(Logger logger) {
+		// TODO Auto-generated method stub
+		this.logger = logger;
+	}
+
 
 	
 }

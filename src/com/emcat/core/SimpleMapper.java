@@ -1,7 +1,6 @@
 package com.emcat.core;
 
 import javax.servlet.ServletException;
-
 import com.emcat.connector.HttpRequest;
 import com.emcat.einterface.Contained;
 import com.emcat.einterface.Container;
@@ -11,11 +10,13 @@ import com.emcat.lifecycle.LifeCycle;
 import com.emcat.lifecycle.LifeCycleException;
 import com.emcat.lifecycle.LifeCycleSupport;
 import com.emcat.lifecycle.LifecycleListener;
+import com.emcat.logger.Logger;
 
 public class SimpleMapper implements Mapper,Contained,LifeCycle{
 	
 	Container container ;
 	LifeCycleSupport lifeCycleSupport; 
+	Logger logger;
 	
 	public SimpleMapper(Container c){
 		this.container = c;
@@ -60,7 +61,7 @@ public class SimpleMapper implements Mapper,Contained,LifeCycle{
 	@Override
 	public void stop() throws LifeCycleException {
 		// TODO Auto-generated method stub
-		System.out.println("Mapper stop Loading");
+		logger.log("Mapper stop Loading");
 	}
 
 	@Override
@@ -75,6 +76,20 @@ public class SimpleMapper implements Mapper,Contained,LifeCycle{
 			throws LifeCycleException {
 		// TODO Auto-generated method stub
 		lifeCycleSupport.removeLifeCycleListener(listener);
+	}
+
+	public Logger getLogger() {
+		// TODO Auto-generated method stub
+		Logger loggerContainer = getContainer().getLogger();
+		if(loggerContainer!=null){
+			return loggerContainer;
+		}
+		return logger;
+	}
+
+	public void setLogger(Logger logger) {
+		// TODO Auto-generated method stub
+		this.logger = logger;
 	}
 
 }

@@ -1,9 +1,11 @@
 package com.emcat.einterface;
 
+
 import javax.servlet.ServletException;
 
 import com.emcat.connector.HttpRequest;
 import com.emcat.connector.HttpResponse;
+import com.emcat.logger.Logger;
 
 public interface Container {
 	public void invoke(HttpRequest req,HttpResponse res);
@@ -14,4 +16,6 @@ public interface Container {
 	public Loader getLoader();
 	public void setLoader(Loader loader);
 	public String getName();
+	public Logger getLogger();
+	public void setLogger(Logger logger) ;
 }
