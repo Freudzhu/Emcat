@@ -18,4 +18,6 @@ public interface Container {
 	public String getName();
 	public Logger getLogger();
 	public void setLogger(Logger logger) ;
+	public Container getParent();
+	public void setParent(Container parent);
 }

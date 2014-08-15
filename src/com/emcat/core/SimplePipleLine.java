@@ -73,7 +73,8 @@ public class SimplePipleLine implements PipleLine,LifeCycle,Contained{
 	@Override
 	public void start() throws LifeCycleException {
 		// TODO Auto-generated method stub
-		System.out.println("Piple start Loading");
+		logger = getLogger();
+		logger.log("Piple start Loading");
 	}
 	@Override
 	public void stop() throws LifeCycleException {

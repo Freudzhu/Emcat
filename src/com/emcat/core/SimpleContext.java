@@ -38,7 +38,7 @@ public class SimpleContext implements Context,LifeCycle{
 	
 	public SimpleContext(){
 		pipleLine = new SimplePipleLine(this);
-		loader = new SimpleLoader();
+		loader = new SimpleLoader(this);
 		mapper = new SimpleMapper(this);
 		SimpleContextValue simpleValue  = new SimpleContextValue(this);
 		lifeCycleSupport = new LifeCycleSupport();
@@ -166,7 +166,34 @@ public class SimpleContext implements Context,LifeCycle{
 	@Override
 	public void stop() throws LifeCycleException {
 		// TODO Auto-generated method stub
+		logger = getLogger();
 		logger.log("Context is stoping");
+		if(!started)
+			throw new LifeCycleException("SimpleContext has already stop");
+		Container[] containers = null;
+		try {
+			containers = findChildren();
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		lifeCycleSupport.fireLifeListenner(LifeCycle.BEFORE_STOP_EVENT);
+		if(containers!=null){
+			for(Container container : containers){
+				((LifeCycle)container).stop();
+			}
+		}
+		if(pipleLine!=null){
+			((LifeCycle)pipleLine).stop();
+		}
+		if(loader!=null){
+			((LifeCycle)loader).stop();
+		}
+		if(mapper!=null){
+			((LifeCycle)mapper).stop();
+		}
+		started = false;
+		lifeCycleSupport.fireLifeListenner(LifeCycle.AFTER_STOP_EVENT);
 	}
 
 	@Override
@@ -189,6 +216,18 @@ public class SimpleContext implements Context,LifeCycle{
 
 	public void setLogger(Logger logger) {
 		this.logger = logger;
+	}
+
+	@Override
+	public Container getParent() {
+		// TODO Auto-generated method stub
+		return parent;
+	}
+
+	@Override
+	public void setParent(Container parent) {
+		// TODO Auto-generated method stub
+		this.parent = parent;
 	}
 
 	

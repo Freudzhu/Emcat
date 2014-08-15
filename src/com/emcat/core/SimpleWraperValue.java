@@ -15,11 +15,13 @@ import com.emcat.lifecycle.LifeCycle;
 import com.emcat.lifecycle.LifeCycleException;
 import com.emcat.lifecycle.LifeCycleSupport;
 import com.emcat.lifecycle.LifecycleListener;
+import com.emcat.logger.Logger;
 
 public class SimpleWraperValue implements Value,Contained,LifeCycle{
 	
 	Container container;
 	LifeCycleSupport lifeCycleSupport;
+	Logger logger;
 
 	@Override
 	public void invoke(HttpRequest req, HttpResponse res) {
@@ -54,7 +56,8 @@ public class SimpleWraperValue implements Value,Contained,LifeCycle{
 	@Override
 	public void start() throws LifeCycleException {
 		// TODO Auto-generated method stub
-		System.out.println("Value start Loading");
+		logger = getLogger();
+		logger.log("Value start Loading");
 	}
 
 	@Override
@@ -75,6 +78,18 @@ public class SimpleWraperValue implements Value,Contained,LifeCycle{
 			throws LifeCycleException {
 		// TODO Auto-generated method stub
 		lifeCycleSupport.removeLifeCycleListener(listener);
+	}
+	public Logger getLogger() {
+		if(logger!=null)
+			return logger;
+		Logger logger = getContainer().getLogger();
+		if(logger!=null){
+			return logger;
+		}
+		return null;
+	}
+	public void setLogger(Logger logger) {
+		this.logger = logger;
 	}
 
 }

@@ -128,7 +128,9 @@ public class HttpConnector implements Runnable,LifeCycle{
 	@Override
 	public void stop() throws LifeCycleException {
 		// TODO Auto-generated method stub
-		
+		if(container!=null){
+			((LifeCycle)container).start();
+		}
 	}
 
 	@Override

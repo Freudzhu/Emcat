@@ -55,12 +55,14 @@ public class SimpleMapper implements Mapper,Contained,LifeCycle{
 	@Override
 	public void start() throws LifeCycleException {
 		// TODO Auto-generated method stub
-		System.out.println("Mapper start Loading");
+		logger = getLogger();
+		logger.log("Mapper start Loading");
 	}
 
 	@Override
 	public void stop() throws LifeCycleException {
 		// TODO Auto-generated method stub
+		logger = getLogger();
 		logger.log("Mapper stop Loading");
 	}
 
@@ -80,11 +82,13 @@ public class SimpleMapper implements Mapper,Contained,LifeCycle{
 
 	public Logger getLogger() {
 		// TODO Auto-generated method stub
-		Logger loggerContainer = getContainer().getLogger();
-		if(loggerContainer!=null){
-			return loggerContainer;
+		if(logger!=null)
+			return logger;
+		Logger logger = getContainer().getLogger();
+		if(logger!=null){
+			return logger;
 		}
-		return logger;
+		return null;
 	}
 
 	public void setLogger(Logger logger) {

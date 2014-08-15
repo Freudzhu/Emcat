@@ -30,7 +30,7 @@ public class StandrdWrapper implements Wrapper,PipleLine,LifeCycle{
 	
 	public StandrdWrapper(){
 		pipleLine = new SimplePipleLine(this);
-		loader = new SimpleLoader();
+		loader = new SimpleLoader(this);
 		SimpleWraperValue simpleValue  = new SimpleWraperValue();
 		simpleValue.setContainer(this);
 		pipleLine.setBasic(simpleValue);
@@ -197,7 +197,11 @@ public class StandrdWrapper implements Wrapper,PipleLine,LifeCycle{
 	@Override
 	public void stop() throws LifeCycleException {
 		// TODO Auto-generated method stub
+		logger = getLogger();
 		logger.log("Wrapper stop Loading");
+		if(instance!=null){
+			instance.destroy();
+		}
 	}
 
 	@Override

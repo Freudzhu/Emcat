@@ -12,6 +12,7 @@ import com.emcat.einterface.Value;
 import com.emcat.lifecycle.LifeCycleException;
 import com.emcat.lifecycle.LifecycleListener;
 import com.emcat.lifecycle.SimpleListener;
+import com.emcat.logger.FileLogger;
 import com.emcat.logger.Logger;
 import com.emcat.logger.SystemoutLogger;
 
@@ -39,7 +40,8 @@ public class BootStrap {
 		
 		LifecycleListener listener = new SimpleListener();
 		
-		Logger logger = new SystemoutLogger();
+		Logger logger = new FileLogger(true);
+		//Logger logger = new SystemoutLogger();
 		context.setLogger(logger);
 		
 		try {
