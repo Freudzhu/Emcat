@@ -6,7 +6,6 @@ import javax.servlet.ServletException;
 import com.emcat.connector.HttpRequest;
 import com.emcat.connector.HttpResponse;
 import com.emcat.einterface.Container;
-import com.emcat.einterface.Loader;
 import com.emcat.einterface.PipleLine;
 import com.emcat.einterface.Value;
 import com.emcat.einterface.Wrapper;
@@ -14,6 +13,7 @@ import com.emcat.lifecycle.LifeCycle;
 import com.emcat.lifecycle.LifeCycleException;
 import com.emcat.lifecycle.LifeCycleSupport;
 import com.emcat.lifecycle.LifecycleListener;
+import com.emcat.loader.Loader;
 import com.emcat.logger.Logger;
 
 public class StandrdWrapper implements Wrapper,PipleLine,LifeCycle{
@@ -192,6 +192,10 @@ public class StandrdWrapper implements Wrapper,PipleLine,LifeCycle{
 		// TODO Auto-generated method stub
 		logger = getLogger();
 		logger.log(getName()+" Wrapper start Loading");
+		if(loader!=null){
+			((LifeCycle)loader).start();
+		}
+		
 	}
 
 	@Override

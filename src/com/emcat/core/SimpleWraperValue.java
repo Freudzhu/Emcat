@@ -9,12 +9,12 @@ import com.emcat.connector.HttpRequest;
 import com.emcat.connector.HttpResponse;
 import com.emcat.einterface.Contained;
 import com.emcat.einterface.Container;
-import com.emcat.einterface.Loader;
 import com.emcat.einterface.Value;
 import com.emcat.lifecycle.LifeCycle;
 import com.emcat.lifecycle.LifeCycleException;
 import com.emcat.lifecycle.LifeCycleSupport;
 import com.emcat.lifecycle.LifecycleListener;
+import com.emcat.loader.Loader;
 import com.emcat.logger.Logger;
 
 public class SimpleWraperValue implements Value,Contained,LifeCycle{

@@ -1,4 +1,4 @@
-package com.emcat.einterface;
+package com.emcat.loader;
 
 public interface Loader {
 	public ClassLoader getClassLoader();
