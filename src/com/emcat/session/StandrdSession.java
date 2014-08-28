@@ -17,10 +17,12 @@ public class StandrdSession implements Session{
 	private long creatTime;
 	private long lastAccessedTime;
 	private long thisAccessedTime;
+	private long createTime;
 	private int maxInactiveInterval = DEFAULT_INTER_TIME;
 	private Manager manager;
-	private boolean isNew = false;
-	private boolean isValid = false;
+	private boolean isNew = true;
+	private boolean isValid = true;
+	private boolean expiring = false;
 	
 	public StandrdSession(Manager manager){
 		this.manager = manager;
@@ -84,7 +86,7 @@ public class StandrdSession implements Session{
 	@Override
 	public Object getValue(String arg0) {
 		// TODO Auto-generated method stub
-		return null;
+		return getAttribute(arg0);
 	}
 
 	@Override
@@ -96,7 +98,7 @@ public class StandrdSession implements Session{
 	@Override
 	public void invalidate() {
 		// TODO Auto-generated method stub
-		
+		expire();
 	}
 
 	@Override
@@ -108,6 +110,7 @@ public class StandrdSession implements Session{
 	@Override
 	public void putValue(String arg0, Object arg1){
 		// TODO Auto-generated method stub
+		setAttribute(arg0, arg1);
 	}
 
 	@Override
@@ -122,7 +125,7 @@ public class StandrdSession implements Session{
 	@Override
 	public void removeValue(String arg0) {
 		// TODO Auto-generated method stub
-		
+		removeAttribute(arg0);
 	}
 
 	@Override
@@ -175,16 +178,39 @@ public class StandrdSession implements Session{
 		this.isValid = isValid;
 	}
 
+	public long getCreateTime() {
+		return createTime;
+	}
+	
+	@Override
+	public void setCreationTime(long createTime) {
+		this.createTime = createTime;
+	}
+
 	@Override
 	public void access() {
 		// TODO Auto-generated method stub
-		
+		this.isNew = false;
+		this.lastAccessedTime = this.thisAccessedTime;
+		this.thisAccessedTime = System.currentTimeMillis();
 	}
 
 	@Override
 	public void expire() {
 		// TODO Auto-generated method stub
-		
+		if (expiring)
+            return;
+		expiring = true;
+	    setValid(false);
+	    if (manager != null)
+            manager.remove(this);
+	    expiring = false;
+	}
+
+	@Override
+	public boolean getValid() {
+		// TODO Auto-generated method stub
+		return isValid;
 	}
 
 }

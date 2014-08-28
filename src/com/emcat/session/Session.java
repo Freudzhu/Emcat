@@ -13,6 +13,8 @@ public interface Session {
 	public Enumeration<String> getAttributeNames();
 
 	public long getCreationTime();
+	
+	public void setCreationTime(long createTime);
 
 	public String getId();
 
@@ -49,6 +51,7 @@ public interface Session {
 	public void setNew(boolean isNew);
 	public HttpSession getSession();
 	public void setValid(boolean isValid);
+	public boolean getValid();
 	public void access();
 	public void expire();
 	
